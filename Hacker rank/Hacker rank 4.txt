@@ -1,0 +1,2758 @@
+                                                                     Hacker rank 4
+
+1.Equal Stacks
+
+#include <assert.h>
+#include <ctype.h>
+#include <limits.h>
+#include <math.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* readline();
+char* ltrim(char*);
+char* rtrim(char*);
+char** split_string(char*);
+
+int parse_int(char*);
+
+/*
+ * Complete the 'equalStacks' function below.
+ *
+ * The function is expected to return an INTEGER.
+ * The function accepts following parameters:
+ *  1. INTEGER_ARRAY h1
+ *  2. INTEGER_ARRAY h2
+ *  3. INTEGER_ARRAY h3
+ */
+
+int equalStacks(int h1_count, int* h1, int h2_count, int* h2, int h3_count, int* h3) {
+    
+    int sum1 = 0, sum2 = 0, sum3 = 0;
+    for (int i = 0; i < h1_count; i++) sum1 += h1[i];
+    for (int i = 0; i < h2_count; i++) sum2 += h2[i];
+    for (int i = 0; i < h3_count; i++) sum3 += h3[i];
+
+    
+    int i1 = 0, i2 = 0, i3 = 0;
+
+    
+    while (i1 < h1_count && i2 < h2_count && i3 < h3_count) {
+    
+        if (sum1 == sum2 && sum2 == sum3) {
+            return sum1;
+        }
+
+        
+        if (sum1 >= sum2 && sum1 >= sum3) {
+            sum1 -= h1[i1++];
+        } else if (sum2 >= sum1 && sum2 >= sum3) {
+            sum2 -= h2[i2++];
+        } else {
+            sum3 -= h3[i3++];
+        }
+    }
+
+    return 0; 
+}
+
+
+int main()
+{
+    FILE* fptr = fopen(getenv("OUTPUT_PATH"), "w");
+
+    char** first_multiple_input = split_string(rtrim(readline()));
+
+    int n1 = parse_int(*(first_multiple_input + 0));
+
+    int n2 = parse_int(*(first_multiple_input + 1));
+
+    int n3 = parse_int(*(first_multiple_input + 2));
+
+    char** h1_temp = split_string(rtrim(readline()));
+
+    int* h1 = malloc(n1 * sizeof(int));
+
+    for (int i = 0; i < n1; i++) {
+        int h1_item = parse_int(*(h1_temp + i));
+
+        *(h1 + i) = h1_item;
+    }
+
+    char** h2_temp = split_string(rtrim(readline()));
+
+    int* h2 = malloc(n2 * sizeof(int));
+
+    for (int i = 0; i < n2; i++) {
+        int h2_item = parse_int(*(h2_temp + i));
+
+        *(h2 + i) = h2_item;
+    }
+
+    char** h3_temp = split_string(rtrim(readline()));
+
+    int* h3 = malloc(n3 * sizeof(int));
+
+    for (int i = 0; i < n3; i++) {
+        int h3_item = parse_int(*(h3_temp + i));
+
+        *(h3 + i) = h3_item;
+    }
+
+    int result = equalStacks(n1, h1, n2, h2, n3, h3);
+
+    fprintf(fptr, "%d\n", result);
+
+    fclose(fptr);
+
+    return 0;
+}
+
+char* readline() {
+    size_t alloc_length = 1024;
+    size_t data_length = 0;
+
+    char* data = malloc(alloc_length);
+
+    while (true) {
+        char* cursor = data + data_length;
+        char* line = fgets(cursor, alloc_length - data_length, stdin);
+
+        if (!line) {
+            break;
+        }
+
+        data_length += strlen(cursor);
+
+        if (data_length < alloc_length - 1 || data[data_length - 1] == '\n') {
+            break;
+        }
+
+        alloc_length <<= 1;
+
+        data = realloc(data, alloc_length);
+
+        if (!data) {
+            data = '\0';
+
+            break;
+        }
+    }
+
+    if (data[data_length - 1] == '\n') {
+        data[data_length - 1] = '\0';
+
+        data = realloc(data, data_length);
+
+        if (!data) {
+            data = '\0';
+        }
+    } else {
+        data = realloc(data, data_length + 1);
+
+        if (!data) {
+            data = '\0';
+        } else {
+            data[data_length] = '\0';
+        }
+    }
+
+    return data;
+}
+
+char* ltrim(char* str) {
+    if (!str) {
+        return '\0';
+    }
+
+    if (!*str) {
+        return str;
+    }
+
+    while (*str != '\0' && isspace(*str)) {
+        str++;
+    }
+
+    return str;
+}
+
+char* rtrim(char* str) {
+    if (!str) {
+        return '\0';
+    }
+
+    if (!*str) {
+        return str;
+    }
+
+    char* end = str + strlen(str) - 1;
+
+    while (end >= str && isspace(*end)) {
+        end--;
+    }
+
+    *(end + 1) = '\0';
+
+    return str;
+}
+
+char** split_string(char* str) {
+    char** splits = NULL;
+    char* token = strtok(str, " ");
+
+    int spaces = 0;
+
+    while (token) {
+        splits = realloc(splits, sizeof(char*) * ++spaces);
+
+        if (!splits) {
+            return splits;
+        }
+
+        splits[spaces - 1] = token;
+
+        token = strtok(NULL, " ");
+    }
+
+    return splits;
+}
+
+int parse_int(char* str) {
+    char* endptr;
+    int value = strtol(str, &endptr, 10);
+
+    if (endptr == str || *endptr != '\0') {
+        exit(EXIT_FAILURE);
+    }
+
+    return value;
+}
+
+2.The Maximum Subarray
+
+#include <assert.h>
+#include <ctype.h>
+#include <limits.h>
+#include <math.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* readline();
+char* ltrim(char*);
+char* rtrim(char*);
+char** split_string(char*);
+
+int parse_int(char*);
+
+/*
+ * Complete the 'maxSubarray' function below.
+ *
+ * The function is expected to return an INTEGER_ARRAY.
+ * The function accepts INTEGER_ARRAY arr as parameter.
+ */
+
+/*
+ * To return the integer array from the function, you should:
+ *     - Store the size of the array to be returned in the result_count variable
+ *     - Allocate the array statically or dynamically
+ *
+ * For example,
+ * int* return_integer_array_using_static_allocation(int* result_count) {
+ *     *result_count = 5;
+ *
+ *     static int a[5] = {1, 2, 3, 4, 5};
+ *
+ *     return a;
+ * }
+ *
+ * int* return_integer_array_using_dynamic_allocation(int* result_count) {
+ *     *result_count = 5;
+ *
+ *     int *a = malloc(5 * sizeof(int));
+ *
+ *     for (int i = 0; i < 5; i++) {
+ *         *(a + i) = i + 1;
+ *     }
+ *
+ *     return a;
+ * }
+ *
+ */
+int* maxSubarray(int arr_count, int* arr, int* result_count) {
+    *result_count = 2;
+    int* result = malloc(2 * sizeof(int));
+
+
+    int max_so_far = arr[0];
+    int current_max = arr[0];
+
+    for (int i = 1; i < arr_count; i++) {
+        if (current_max + arr[i] > arr[i])
+            current_max = current_max + arr[i];
+        else
+            current_max = arr[i];
+
+        if (current_max > max_so_far)
+            max_so_far = current_max;
+    }
+
+    
+    int subseq_sum = 0;
+    int has_positive = 0;
+    int max_element = arr[0];
+
+    for (int i = 0; i < arr_count; i++) {
+        if (arr[i] > 0) {
+            subseq_sum += arr[i];
+            has_positive = 1;
+        }
+        if (arr[i] > max_element) {
+            max_element = arr[i];
+        }
+    }
+
+    if (!has_positive) {
+        subseq_sum = max_element; 
+    }
+
+    result[0] = max_so_far;  
+    result[1] = subseq_sum;  
+
+    return result;
+}
+
+
+int main()
+{
+    FILE* fptr = fopen(getenv("OUTPUT_PATH"), "w");
+
+    int t = parse_int(ltrim(rtrim(readline())));
+
+    for (int t_itr = 0; t_itr < t; t_itr++) {
+        int n = parse_int(ltrim(rtrim(readline())));
+
+        char** arr_temp = split_string(rtrim(readline()));
+
+        int* arr = malloc(n * sizeof(int));
+
+        for (int i = 0; i < n; i++) {
+            int arr_item = parse_int(*(arr_temp + i));
+
+            *(arr + i) = arr_item;
+        }
+
+        int result_count;
+        int* result = maxSubarray(n, arr, &result_count);
+
+        for (int i = 0; i < result_count; i++) {
+            fprintf(fptr, "%d", *(result + i));
+
+            if (i != result_count - 1) {
+                fprintf(fptr, " ");
+            }
+        }
+
+        fprintf(fptr, "\n");
+    }
+
+    fclose(fptr);
+
+    return 0;
+}
+
+char* readline() {
+    size_t alloc_length = 1024;
+    size_t data_length = 0;
+
+    char* data = malloc(alloc_length);
+
+    while (true) {
+        char* cursor = data + data_length;
+        char* line = fgets(cursor, alloc_length - data_length, stdin);
+
+        if (!line) {
+            break;
+        }
+
+        data_length += strlen(cursor);
+
+        if (data_length < alloc_length - 1 || data[data_length - 1] == '\n') {
+            break;
+        }
+
+        alloc_length <<= 1;
+
+        data = realloc(data, alloc_length);
+
+        if (!data) {
+            data = '\0';
+
+            break;
+        }
+    }
+
+    if (data[data_length - 1] == '\n') {
+        data[data_length - 1] = '\0';
+
+        data = realloc(data, data_length);
+
+        if (!data) {
+            data = '\0';
+        }
+    } else {
+        data = realloc(data, data_length + 1);
+
+        if (!data) {
+            data = '\0';
+        } else {
+            data[data_length] = '\0';
+        }
+    }
+
+    return data;
+}
+
+char* ltrim(char* str) {
+    if (!str) {
+        return '\0';
+    }
+
+    if (!*str) {
+        return str;
+    }
+
+    while (*str != '\0' && isspace(*str)) {
+        str++;
+    }
+
+    return str;
+}
+
+char* rtrim(char* str) {
+    if (!str) {
+        return '\0';
+    }
+
+    if (!*str) {
+        return str;
+    }
+
+    char* end = str + strlen(str) - 1;
+
+    while (end >= str && isspace(*end)) {
+        end--;
+    }
+
+    *(end + 1) = '\0';
+
+    return str;
+}
+
+char** split_string(char* str) {
+    char** splits = NULL;
+    char* token = strtok(str, " ");
+
+    int spaces = 0;
+
+    while (token) {
+        splits = realloc(splits, sizeof(char*) * ++spaces);
+
+        if (!splits) {
+            return splits;
+        }
+
+        splits[spaces - 1] = token;
+
+        token = strtok(NULL, " ");
+    }
+
+    return splits;
+}
+
+int parse_int(char* str) {
+    char* endptr;
+    int value = strtol(str, &endptr, 10);
+
+    if (endptr == str || *endptr != '\0') {
+        exit(EXIT_FAILURE);
+    }
+
+    return value;
+}
+
+3.Lego Blocks
+
+#include <assert.h>
+#include <ctype.h>
+#include <limits.h>
+#include <math.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* readline();
+char* ltrim(char*);
+char* rtrim(char*);
+char** split_string(char*);
+
+int parse_int(char*);
+
+/*
+ * Complete the 'legoBlocks' function below.
+ *
+ * The function is expected to return an INTEGER.
+ * The function accepts following parameters:
+ *  1. INTEGER n
+ *  2. INTEGER m
+ */
+
+#define MOD 1000000007
+
+// fast modular exponentiation
+long long mod_pow(long long base, long long exp) {
+    long long result = 1;
+    base %= MOD;
+    while (exp > 0) {
+        if (exp % 2 == 1) result = (result * base) % MOD;
+        base = (base * base) % MOD;
+        exp /= 2;
+    }
+    return result;
+}
+
+int legoBlocks(int n, int m) {
+    long long row_ways[m+1];
+    long long total_ways[m+1];
+    long long solid[m+1];
+
+    // 1. compute ways to build a single row
+    row_ways[0] = 1;
+    for (int i = 1; i <= m; i++) {
+        row_ways[i] = 0;
+        for (int b = 1; b <= 4; b++) {
+            if (i - b >= 0) {
+                row_ways[i] = (row_ways[i] + row_ways[i-b]) % MOD;
+            }
+        }
+    }
+
+    // 2. raise to power n for total walls
+    for (int i = 1; i <= m; i++) {
+        total_ways[i] = mod_pow(row_ways[i], n);
+    }
+
+    // 3. compute solid walls using inclusion-exclusion
+    solid[0] = 0;
+    for (int i = 1; i <= m; i++) {
+        solid[i] = total_ways[i];
+        for (int k = 1; k < i; k++) {
+            solid[i] = (solid[i] - (solid[k] * total_ways[i-k]) % MOD + MOD) % MOD;
+        }
+    }
+
+    return (int)solid[m];
+}
+
+int main()
+{
+    FILE* fptr = fopen(getenv("OUTPUT_PATH"), "w");
+
+    int t = parse_int(ltrim(rtrim(readline())));
+
+    for (int t_itr = 0; t_itr < t; t_itr++) {
+        char** first_multiple_input = split_string(rtrim(readline()));
+
+        int n = parse_int(*(first_multiple_input + 0));
+
+        int m = parse_int(*(first_multiple_input + 1));
+
+        int result = legoBlocks(n, m);
+
+        fprintf(fptr, "%d\n", result);
+    }
+
+    fclose(fptr);
+
+    return 0;
+}
+
+char* readline() {
+    size_t alloc_length = 1024;
+    size_t data_length = 0;
+
+    char* data = malloc(alloc_length);
+
+    while (true) {
+        char* cursor = data + data_length;
+        char* line = fgets(cursor, alloc_length - data_length, stdin);
+
+        if (!line) {
+            break;
+        }
+
+        data_length += strlen(cursor);
+
+        if (data_length < alloc_length - 1 || data[data_length - 1] == '\n') {
+            break;
+        }
+
+        alloc_length <<= 1;
+
+        data = realloc(data, alloc_length);
+
+        if (!data) {
+            data = '\0';
+
+            break;
+        }
+    }
+
+    if (data[data_length - 1] == '\n') {
+        data[data_length - 1] = '\0';
+
+        data = realloc(data, data_length);
+
+        if (!data) {
+            data = '\0';
+        }
+    } else {
+        data = realloc(data, data_length + 1);
+
+        if (!data) {
+            data = '\0';
+        } else {
+            data[data_length] = '\0';
+        }
+    }
+
+    return data;
+}
+
+char* ltrim(char* str) {
+    if (!str) {
+        return '\0';
+    }
+
+    if (!*str) {
+        return str;
+    }
+
+    while (*str != '\0' && isspace(*str)) {
+        str++;
+    }
+
+    return str;
+}
+
+char* rtrim(char* str) {
+    if (!str) {
+        return '\0';
+    }
+
+    if (!*str) {
+        return str;
+    }
+
+    char* end = str + strlen(str) - 1;
+
+    while (end >= str && isspace(*end)) {
+        end--;
+    }
+
+    *(end + 1) = '\0';
+
+    return str;
+}
+
+char** split_string(char* str) {
+    char** splits = NULL;
+    char* token = strtok(str, " ");
+
+    int spaces = 0;
+
+    while (token) {
+        splits = realloc(splits, sizeof(char*) * ++spaces);
+
+        if (!splits) {
+            return splits;
+        }
+
+        splits[spaces - 1] = token;
+
+        token = strtok(NULL, " ");
+    }
+
+    return splits;
+}
+
+int parse_int(char* str) {
+    char* endptr;
+    int value = strtol(str, &endptr, 10);
+
+    if (endptr == str || *endptr != '\0') {
+        exit(EXIT_FAILURE);
+    }
+
+    return value;
+}
+
+4.QHEAP1
+
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAXN 100000
+
+// --- Min-Heap implementation ---
+int heap[MAXN+5];
+int heap_size = 0;
+
+void swap(int *a, int *b) {
+    int t = *a;
+    *a = *b;
+    *b = t;
+}
+
+void heapify_up(int idx) {
+    while (idx > 0 && heap[(idx-1)/2] > heap[idx]) {
+        swap(&heap[(idx-1)/2], &heap[idx]);
+        idx = (idx-1)/2;
+    }
+}
+
+void heapify_down(int idx) {
+    int smallest = idx;
+    int left = 2*idx + 1;
+    int right = 2*idx + 2;
+
+    if (left < heap_size && heap[left] < heap[smallest])
+        smallest = left;
+    if (right < heap_size && heap[right] < heap[smallest])
+        smallest = right;
+
+    if (smallest != idx) {
+        swap(&heap[idx], &heap[smallest]);
+        heapify_down(smallest);
+    }
+}
+
+void insert(int val) {
+    heap[heap_size] = val;
+    heapify_up(heap_size);
+    heap_size++;
+}
+
+int get_min() {
+    return heap[0];
+}
+
+// delete arbitrary element v
+void delete_val(int v) {
+    // find element (linear search, acceptable for HackerRank constraints)
+    for (int i = 0; i < heap_size; i++) {
+        if (heap[i] == v) {
+            heap[i] = heap[heap_size-1];
+            heap_size--;
+            heapify_down(i);
+            heapify_up(i);
+            return;
+        }
+    }
+}
+
+int main() {
+    int Q;
+    scanf("%d", &Q);
+
+    while (Q--) {
+        int type, v;
+        scanf("%d", &type);
+
+        if (type == 1) {
+            scanf("%d", &v);
+            insert(v);
+        } else if (type == 2) {
+            scanf("%d", &v);
+            delete_val(v);
+        } else if (type == 3) {
+            printf("%d\n", get_min());
+        }
+    }
+
+    return 0;
+}
+
+5.Jesse and Cookies
+
+
+6.Hackerland Radio Transmitters
+
+
+#include <assert.h>
+#include <ctype.h>
+#include <limits.h>
+#include <math.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* readline();
+char* ltrim(char*);
+char* rtrim(char*);
+char** split_string(char*);
+
+int parse_int(char*);
+
+/*
+ * Complete the 'hackerlandRadioTransmitters' function below.
+ *
+ * The function is expected to return an INTEGER.
+ * The function accepts following parameters:
+ *  1. INTEGER_ARRAY x
+ *  2. INTEGER k
+ */
+
+int cmpfunc(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int hackerlandRadioTransmitters(int x_count, int* x, int k) {
+    // Step 1: Sort house positions
+    qsort(x, x_count, sizeof(int), cmpfunc);
+
+    int transmitters = 0;
+    int i = 0;
+
+    while (i < x_count) {
+        transmitters++;
+
+        // Step 2: Find the furthest house within k from x[i]
+        int loc = x[i] + k;
+        while (i < x_count && x[i] <= loc) {
+            i++;
+        }
+
+        // Step 3: Place transmitter at the last house within range
+        int place = x[i - 1] + k;
+
+        // Step 4: Skip all houses covered by this transmitter
+        while (i < x_count && x[i] <= place) {
+            i++;
+        }
+    }
+
+    return transmitters;
+}
+
+int main()
+{
+    FILE* fptr = fopen(getenv("OUTPUT_PATH"), "w");
+
+    char** first_multiple_input = split_string(rtrim(readline()));
+
+    int n = parse_int(*(first_multiple_input + 0));
+
+    int k = parse_int(*(first_multiple_input + 1));
+
+    char** x_temp = split_string(rtrim(readline()));
+
+    int* x = malloc(n * sizeof(int));
+
+    for (int i = 0; i < n; i++) {
+        int x_item = parse_int(*(x_temp + i));
+
+        *(x + i) = x_item;
+    }
+
+    int result = hackerlandRadioTransmitters(n, x, k);
+
+    fprintf(fptr, "%d\n", result);
+
+    fclose(fptr);
+
+    return 0;
+}
+
+char* readline() {
+    size_t alloc_length = 1024;
+    size_t data_length = 0;
+
+    char* data = malloc(alloc_length);
+
+    while (true) {
+        char* cursor = data + data_length;
+        char* line = fgets(cursor, alloc_length - data_length, stdin);
+
+        if (!line) {
+            break;
+        }
+
+        data_length += strlen(cursor);
+
+        if (data_length < alloc_length - 1 || data[data_length - 1] == '\n') {
+            break;
+        }
+
+        alloc_length <<= 1;
+
+        data = realloc(data, alloc_length);
+
+        if (!data) {
+            data = '\0';
+
+            break;
+        }
+    }
+
+    if (data[data_length - 1] == '\n') {
+        data[data_length - 1] = '\0';
+
+        data = realloc(data, data_length);
+
+        if (!data) {
+            data = '\0';
+        }
+    } else {
+        data = realloc(data, data_length + 1);
+
+        if (!data) {
+            data = '\0';
+        } else {
+            data[data_length] = '\0';
+        }
+    }
+
+    return data;
+}
+
+char* ltrim(char* str) {
+    if (!str) {
+        return '\0';
+    }
+
+    if (!*str) {
+        return str;
+    }
+
+    while (*str != '\0' && isspace(*str)) {
+        str++;
+    }
+
+    return str;
+}
+
+char* rtrim(char* str) {
+    if (!str) {
+        return '\0';
+    }
+
+    if (!*str) {
+        return str;
+    }
+
+    char* end = str + strlen(str) - 1;
+
+    while (end >= str && isspace(*end)) {
+        end--;
+    }
+
+    *(end + 1) = '\0';
+
+    return str;
+}
+
+char** split_string(char* str) {
+    char** splits = NULL;
+    char* token = strtok(str, " ");
+
+    int spaces = 0;
+
+    while (token) {
+        splits = realloc(splits, sizeof(char*) * ++spaces);
+
+        if (!splits) {
+            return splits;
+        }
+
+        splits[spaces - 1] = token;
+
+        token = strtok(NULL, " ");
+    }
+
+    return splits;
+}
+
+int parse_int(char* str) {
+    char* endptr;
+    int value = strtol(str, &endptr, 10);
+
+    if (endptr == str || *endptr != '\0') {
+        exit(EXIT_FAILURE);
+    }
+
+    return value;
+}
+
+7.Queries with Fixed Length
+
+#include <assert.h>
+#include <ctype.h>
+#include <limits.h>
+#include <math.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* readline();
+char* ltrim(char*);
+char* rtrim(char*);
+char** split_string(char*);
+
+int parse_int(char*);
+
+/*
+ * Complete the 'solve' function below.
+ *
+ * The function is expected to return an INTEGER_ARRAY.
+ * The function accepts following parameters:
+ *  1. INTEGER_ARRAY arr
+ *  2. INTEGER_ARRAY queries
+ */
+
+/*
+ * To return the integer array from the function, you should:
+ *     - Store the size of the array to be returned in the result_count variable
+ *     - Allocate the array statically or dynamically
+ *
+ * For example,
+ * int* return_integer_array_using_static_allocation(int* result_count) {
+ *     *result_count = 5;
+ *
+ *     static int a[5] = {1, 2, 3, 4, 5};
+ *
+ *     return a;
+ * }
+ *
+ * int* return_integer_array_using_dynamic_allocation(int* result_count) {
+ *     *result_count = 5;
+ *
+ *     int *a = malloc(5 * sizeof(int));
+ *
+ *     for (int i = 0; i < 5; i++) {
+ *         *(a + i) = i + 1;
+ *     }
+ *
+ *     return a;
+ * }
+ *
+ */
+int* solve(int arr_count, int* arr, int queries_count, int* queries, int* result_count) {
+    *result_count = queries_count;   // number of answers = number of queries
+
+    int *result = malloc(queries_count * sizeof(int));
+    if (!result) exit(EXIT_FAILURE);
+
+    for (int i = 0; i < queries_count; i++) {
+        int idx = queries[i];   // query index
+        if (idx >= 0 && idx < arr_count) {
+            result[i] = arr[idx];
+        } else {
+            result[i] = -1;  // safe fallback if index is invalid
+        }
+    }
+
+    return result;
+}
+
+int main()
+{
+    FILE* fptr = fopen(getenv("OUTPUT_PATH"), "w");
+
+    char** first_multiple_input = split_string(rtrim(readline()));
+
+    int n = parse_int(*(first_multiple_input + 0));
+
+    int q = parse_int(*(first_multiple_input + 1));
+
+    char** arr_temp = split_string(rtrim(readline()));
+
+    int* arr = malloc(n * sizeof(int));
+
+    for (int i = 0; i < n; i++) {
+        int arr_item = parse_int(*(arr_temp + i));
+
+        *(arr + i) = arr_item;
+    }
+
+    int* queries = malloc(q * sizeof(int));
+
+    for (int i = 0; i < q; i++) {
+        int queries_item = parse_int(ltrim(rtrim(readline())));
+
+        *(queries + i) = queries_item;
+    }
+
+    int result_count;
+    int* result = solve(n, arr, q, queries, &result_count);
+
+    for (int i = 0; i < result_count; i++) {
+        fprintf(fptr, "%d", *(result + i));
+
+        if (i != result_count - 1) {
+            fprintf(fptr, "\n");
+        }
+    }
+
+    fprintf(fptr, "\n");
+
+    fclose(fptr);
+
+    return 0;
+}
+
+char* readline() {
+    size_t alloc_length = 1024;
+    size_t data_length = 0;
+
+    char* data = malloc(alloc_length);
+
+    while (true) {
+        char* cursor = data + data_length;
+        char* line = fgets(cursor, alloc_length - data_length, stdin);
+
+        if (!line) {
+            break;
+        }
+
+        data_length += strlen(cursor);
+
+        if (data_length < alloc_length - 1 || data[data_length - 1] == '\n') {
+            break;
+        }
+
+        alloc_length <<= 1;
+
+        data = realloc(data, alloc_length);
+
+        if (!data) {
+            data = '\0';
+
+            break;
+        }
+    }
+
+    if (data[data_length - 1] == '\n') {
+        data[data_length - 1] = '\0';
+
+        data = realloc(data, data_length);
+
+        if (!data) {
+            data = '\0';
+        }
+    } else {
+        data = realloc(data, data_length + 1);
+
+        if (!data) {
+            data = '\0';
+        } else {
+            data[data_length] = '\0';
+        }
+    }
+
+    return data;
+}
+
+char* ltrim(char* str) {
+    if (!str) {
+        return '\0';
+    }
+
+    if (!*str) {
+        return str;
+    }
+
+    while (*str != '\0' && isspace(*str)) {
+        str++;
+    }
+
+    return str;
+}
+
+char* rtrim(char* str) {
+    if (!str) {
+        return '\0';
+    }
+
+    if (!*str) {
+        return str;
+    }
+
+    char* end = str + strlen(str) - 1;
+
+    while (end >= str && isspace(*end)) {
+        end--;
+    }
+
+    *(end + 1) = '\0';
+
+    return str;
+}
+
+char** split_string(char* str) {
+    char** splits = NULL;
+    char* token = strtok(str, " ");
+
+    int spaces = 0;
+
+    while (token) {
+        splits = realloc(splits, sizeof(char*) * ++spaces);
+
+        if (!splits) {
+            return splits;
+        }
+
+        splits[spaces - 1] = token;
+
+        token = strtok(NULL, " ");
+    }
+
+    return splits;
+}
+
+int parse_int(char* str) {
+    char* endptr;
+    int value = strtol(str, &endptr, 10);
+
+    if (endptr == str || *endptr != '\0') {
+        exit(EXIT_FAILURE);
+    }
+
+    return value;
+}
+
+8.Array Manipulation
+
+#include <assert.h>
+#include <ctype.h>
+#include <limits.h>
+#include <math.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* readline();
+char* ltrim(char*);
+char* rtrim(char*);
+char** split_string(char*);
+
+int parse_int(char*);
+
+/*
+ * Complete the 'arrayManipulation' function below.
+ *
+ * The function is expected to return a LONG_INTEGER.
+ * The function accepts following parameters:
+ *  1. INTEGER n
+ *  2. 2D_INTEGER_ARRAY queries
+ */
+
+long arrayManipulation(int n, int queries_rows, int queries_columns, int** queries) {
+    // Use a long array to avoid overflow
+    long* arr = calloc(n + 2, sizeof(long));  // +2 to handle r+1 safely
+
+    // Apply difference array technique
+    for (int i = 0; i < queries_rows; i++) {
+        int a = queries[i][0];
+        int b = queries[i][1];
+        int k = queries[i][2];
+
+        arr[a] += k;
+        arr[b + 1] -= k;
+    }
+
+    // Find prefix sum and track max
+    long max = 0, curr = 0;
+    for (int i = 1; i <= n; i++) {
+        curr += arr[i];
+        if (curr > max) {
+            max = curr;
+        }
+    }
+
+    free(arr);
+    return max;
+}
+
+
+int main()
+{
+    FILE* fptr = fopen(getenv("OUTPUT_PATH"), "w");
+
+    char** first_multiple_input = split_string(rtrim(readline()));
+
+    int n = parse_int(*(first_multiple_input + 0));
+
+    int m = parse_int(*(first_multiple_input + 1));
+
+    int** queries = malloc(m * sizeof(int*));
+
+    for (int i = 0; i < m; i++) {
+        *(queries + i) = malloc(3 * (sizeof(int)));
+
+        char** queries_item_temp = split_string(rtrim(readline()));
+
+        for (int j = 0; j < 3; j++) {
+            int queries_item = parse_int(*(queries_item_temp + j));
+
+            *(*(queries + i) + j) = queries_item;
+        }
+    }
+
+    long result = arrayManipulation(n, m, 3, queries);
+
+    fprintf(fptr, "%ld\n", result);
+
+    fclose(fptr);
+
+    return 0;
+}
+
+char* readline() {
+    size_t alloc_length = 1024;
+    size_t data_length = 0;
+
+    char* data = malloc(alloc_length);
+
+    while (true) {
+        char* cursor = data + data_length;
+        char* line = fgets(cursor, alloc_length - data_length, stdin);
+
+        if (!line) {
+            break;
+        }
+
+        data_length += strlen(cursor);
+
+        if (data_length < alloc_length - 1 || data[data_length - 1] == '\n') {
+            break;
+        }
+
+        alloc_length <<= 1;
+
+        data = realloc(data, alloc_length);
+
+        if (!data) {
+            data = '\0';
+
+            break;
+        }
+    }
+
+    if (data[data_length - 1] == '\n') {
+        data[data_length - 1] = '\0';
+
+        data = realloc(data, data_length);
+
+        if (!data) {
+            data = '\0';
+        }
+    } else {
+        data = realloc(data, data_length + 1);
+
+        if (!data) {
+            data = '\0';
+        } else {
+            data[data_length] = '\0';
+        }
+    }
+
+    return data;
+}
+
+char* ltrim(char* str) {
+    if (!str) {
+        return '\0';
+    }
+
+    if (!*str) {
+        return str;
+    }
+
+    while (*str != '\0' && isspace(*str)) {
+        str++;
+    }
+
+    return str;
+}
+
+char* rtrim(char* str) {
+    if (!str) {
+        return '\0';
+    }
+
+    if (!*str) {
+        return str;
+    }
+
+    char* end = str + strlen(str) - 1;
+
+    while (end >= str && isspace(*end)) {
+        end--;
+    }
+
+    *(end + 1) = '\0';
+
+    return str;
+}
+
+char** split_string(char* str) {
+    char** splits = NULL;
+    char* token = strtok(str, " ");
+
+    int spaces = 0;
+
+    while (token) {
+        splits = realloc(splits, sizeof(char*) * ++spaces);
+
+        if (!splits) {
+            return splits;
+        }
+
+        splits[spaces - 1] = token;
+
+        token = strtok(NULL, " ");
+    }
+
+    return splits;
+}
+
+int parse_int(char* str) {
+    char* endptr;
+    int value = strtol(str, &endptr, 10);
+
+    if (endptr == str || *endptr != '\0') {
+        exit(EXIT_FAILURE);
+    }
+
+    return value;
+}
+
+9.Highest Value Palindrome
+
+#include <assert.h>
+#include <ctype.h>
+#include <limits.h>
+#include <math.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* readline();
+char* ltrim(char*);
+char* rtrim(char*);
+char** split_string(char*);
+
+int parse_int(char*);
+
+/*
+ * Complete the 'highestValuePalindrome' function below.
+ *
+ * The function is expected to return a STRING.
+ * The function accepts following parameters:
+ *  1. STRING s
+ *  2. INTEGER n
+ *  3. INTEGER k
+ */
+
+/*
+ * To return the string from the function, you should either do static allocation or dynamic allocation
+ *
+ * For example,
+ * char* return_string_using_static_allocation() {
+ *     static char s[] = "static allocation of string";
+ *
+ *     return s;
+ * }
+ *
+ * char* return_string_using_dynamic_allocation() {
+ *     char* s = malloc(100 * sizeof(char));
+ *
+ *     s = "dynamic allocation of string";
+ *
+ *     return s;
+ * }
+ *
+ */
+char* highestValuePalindrome(char* s, int n, int k) {
+    char* result = malloc((n + 1) * sizeof(char));
+    strcpy(result, s);
+
+    int* changed = calloc(n, sizeof(int)); // track positions changed to make palindrome
+    int left = 0, right = n - 1;
+
+    // Step 1: Make it a palindrome (minimal changes)
+    while (left < right) {
+        if (result[left] != result[right]) {
+            if (k == 0) { 
+                free(changed);
+                strcpy(result, "-1");
+                return result;
+            }
+            if (result[left] > result[right]) {
+                result[right] = result[left];
+            } else {
+                result[left] = result[right];
+            }
+            changed[left] = changed[right] = 1;
+            k--;
+        }
+        left++;
+        right--;
+    }
+
+    // Step 2: Maximize value (turn into 9s if possible)
+    left = 0;
+    right = n - 1;
+    while (left <= right && k > 0) {
+        if (left == right) {
+            // Middle element in odd-length string
+            if (result[left] != '9' && k > 0) {
+                result[left] = '9';
+                k--;
+            }
+        } else {
+            if (result[left] != '9') {
+                if (changed[left] || changed[right]) {
+                    // Already changed once, only 1 more change needed
+                    if (k >= 1) {
+                        result[left] = result[right] = '9';
+                        k--;
+                    }
+                } else {
+                    // Not changed yet, need 2 changes
+                    if (k >= 2) {
+                        result[left] = result[right] = '9';
+                        k -= 2;
+                    }
+                }
+            }
+        }
+        left++;
+        right--;
+    }
+
+    free(changed);
+    result[n] = '\0';
+    return result;
+}
+
+int main()
+{
+    FILE* fptr = fopen(getenv("OUTPUT_PATH"), "w");
+
+    char** first_multiple_input = split_string(rtrim(readline()));
+
+    int n = parse_int(*(first_multiple_input + 0));
+
+    int k = parse_int(*(first_multiple_input + 1));
+
+    char* s = readline();
+
+    char* result = highestValuePalindrome(s, n, k);
+
+    fprintf(fptr, "%s\n", result);
+
+    fclose(fptr);
+
+    return 0;
+}
+
+char* readline() {
+    size_t alloc_length = 1024;
+    size_t data_length = 0;
+
+    char* data = malloc(alloc_length);
+
+    while (true) {
+        char* cursor = data + data_length;
+        char* line = fgets(cursor, alloc_length - data_length, stdin);
+
+        if (!line) {
+            break;
+        }
+
+        data_length += strlen(cursor);
+
+        if (data_length < alloc_length - 1 || data[data_length - 1] == '\n') {
+            break;
+        }
+
+        alloc_length <<= 1;
+
+        data = realloc(data, alloc_length);
+
+        if (!data) {
+            data = '\0';
+
+            break;
+        }
+    }
+
+    if (data[data_length - 1] == '\n') {
+        data[data_length - 1] = '\0';
+
+        data = realloc(data, data_length);
+
+        if (!data) {
+            data = '\0';
+        }
+    } else {
+        data = realloc(data, data_length + 1);
+
+        if (!data) {
+            data = '\0';
+        } else {
+            data[data_length] = '\0';
+        }
+    }
+
+    return data;
+}
+
+char* ltrim(char* str) {
+    if (!str) {
+        return '\0';
+    }
+
+    if (!*str) {
+        return str;
+    }
+
+    while (*str != '\0' && isspace(*str)) {
+        str++;
+    }
+
+    return str;
+}
+
+char* rtrim(char* str) {
+    if (!str) {
+        return '\0';
+    }
+
+    if (!*str) {
+        return str;
+    }
+
+    char* end = str + strlen(str) - 1;
+
+    while (end >= str && isspace(*end)) {
+        end--;
+    }
+
+    *(end + 1) = '\0';
+
+    return str;
+}
+
+char** split_string(char* str) {
+    char** splits = NULL;
+    char* token = strtok(str, " ");
+
+    int spaces = 0;
+
+    while (token) {
+        splits = realloc(splits, sizeof(char*) * ++spaces);
+
+        if (!splits) {
+            return splits;
+        }
+
+        splits[spaces - 1] = token;
+
+        token = strtok(NULL, " ");
+    }
+
+    return splits;
+}
+
+int parse_int(char* str) {
+    char* endptr;
+    int value = strtol(str, &endptr, 10);
+
+    if (endptr == str || *endptr != '\0') {
+        exit(EXIT_FAILURE);
+    }
+
+    return value;
+}
+
+10.Lily's Homework
+
+#include <assert.h>
+#include <ctype.h>
+#include <limits.h>
+#include <math.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* readline();
+char* ltrim(char*);
+char* rtrim(char*);
+char** split_string(char*);
+
+int parse_int(char*);
+
+/*
+ * Complete the 'lilysHomework' function below.
+ *
+ * The function is expected to return an INTEGER.
+ * The function accepts INTEGER_ARRAY arr as parameter.
+ */
+int cmpfunc(const void* a, const void* b) {
+    return (*(int*)a - *(int*)b);
+}
+
+// Function to count swaps needed to transform arr into sorted version
+int count_swaps(int n, int* arr, int* sorted) {
+    int* index = malloc(n * sizeof(int));
+    bool* visited = calloc(n, sizeof(bool));
+    int swaps = 0;
+
+    // Map values to indices
+    for (int i = 0; i < n; i++) {
+        index[sorted[i]] = i;
+    }
+
+    for (int i = 0; i < n; i++) {
+        if (visited[i] || index[arr[i]] == i)
+            continue;
+
+        int cycle_size = 0;
+        int j = i;
+        while (!visited[j]) {
+            visited[j] = true;
+            j = index[arr[j]];
+            cycle_size++;
+        }
+
+        if (cycle_size > 1)
+            swaps += (cycle_size - 1);
+    }
+
+    free(index);
+    free(visited);
+    return swaps;
+}
+
+int lilysHomework(int arr_count, int* arr) {
+    // Make copies for ascending and descending sort
+    int* asc = malloc(arr_count * sizeof(int));
+    int* desc = malloc(arr_count * sizeof(int));
+    for (int i = 0; i < arr_count; i++) {
+        asc[i] = arr[i];
+        desc[i] = arr[i];
+    }
+
+    // Sort ascending
+    qsort(asc, arr_count, sizeof(int), cmpfunc);
+
+    // Sort descending (just reverse asc)
+    for (int i = 0; i < arr_count; i++) {
+        desc[i] = asc[arr_count - 1 - i];
+    }
+
+    int swaps_asc = count_swaps(arr_count, arr, asc);
+    int swaps_desc = count_swaps(arr_count, arr, desc);
+
+    free(asc);
+    free(desc);
+
+    return (swaps_asc < swaps_desc ? swaps_asc : swaps_desc);
+}
+
+int main()
+{
+    FILE* fptr = fopen(getenv("OUTPUT_PATH"), "w");
+
+    int n = parse_int(ltrim(rtrim(readline())));
+
+    char** arr_temp = split_string(rtrim(readline()));
+
+    int* arr = malloc(n * sizeof(int));
+
+    for (int i = 0; i < n; i++) {
+        int arr_item = parse_int(*(arr_temp + i));
+
+        *(arr + i) = arr_item;
+    }
+
+    int result = lilysHomework(n, arr);
+
+    fprintf(fptr, "%d\n", result);
+
+    fclose(fptr);
+
+    return 0;
+}
+
+char* readline() {
+    size_t alloc_length = 1024;
+    size_t data_length = 0;
+
+    char* data = malloc(alloc_length);
+
+    while (true) {
+        char* cursor = data + data_length;
+        char* line = fgets(cursor, alloc_length - data_length, stdin);
+
+        if (!line) {
+            break;
+        }
+
+        data_length += strlen(cursor);
+
+        if (data_length < alloc_length - 1 || data[data_length - 1] == '\n') {
+            break;
+        }
+
+        alloc_length <<= 1;
+
+        data = realloc(data, alloc_length);
+
+        if (!data) {
+            data = '\0';
+
+            break;
+        }
+    }
+
+    if (data[data_length - 1] == '\n') {
+        data[data_length - 1] = '\0';
+
+        data = realloc(data, data_length);
+
+        if (!data) {
+            data = '\0';
+        }
+    } else {
+        data = realloc(data, data_length + 1);
+
+        if (!data) {
+            data = '\0';
+        } else {
+            data[data_length] = '\0';
+        }
+    }
+
+    return data;
+}
+
+char* ltrim(char* str) {
+    if (!str) {
+        return '\0';
+    }
+
+    if (!*str) {
+        return str;
+    }
+
+    while (*str != '\0' && isspace(*str)) {
+        str++;
+    }
+
+    return str;
+}
+
+char* rtrim(char* str) {
+    if (!str) {
+        return '\0';
+    }
+
+    if (!*str) {
+        return str;
+    }
+
+    char* end = str + strlen(str) - 1;
+
+    while (end >= str && isspace(*end)) {
+        end--;
+    }
+
+    *(end + 1) = '\0';
+
+    return str;
+}
+
+char** split_string(char* str) {
+    char** splits = NULL;
+    char* token = strtok(str, " ");
+
+    int spaces = 0;
+
+    while (token) {
+        splits = realloc(splits, sizeof(char*) * ++spaces);
+
+        if (!splits) {
+            return splits;
+        }
+
+        splits[spaces - 1] = token;
+
+        token = strtok(NULL, " ");
+    }
+
+    return splits;
+}
+
+int parse_int(char* str) {
+    char* endptr;
+    int value = strtol(str, &endptr, 10);
+
+    if (endptr == str || *endptr != '\0') {
+        exit(EXIT_FAILURE);
+    }
+
+    return value;
+}
+
+11.Tree: Preorder Traversal
+
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+
+struct node {
+    
+    int data;
+    struct node *left;
+    struct node *right;
+  
+};
+
+struct node* insert( struct node* root, int data ) {
+		
+	if(root == NULL) {
+	
+        struct node* node = (struct node*)malloc(sizeof(struct node));
+
+        node->data = data;
+
+        node->left = NULL;
+        node->right = NULL;
+        return node;
+	  
+	} else {
+      
+		struct node* cur;
+		
+		if(data <= root->data) {
+            cur = insert(root->left, data);
+            root->left = cur;
+		} else {
+            cur = insert(root->right, data);
+            root->right = cur;
+		}
+	
+		return root;
+	}
+}
+
+/* you only have to complete the function given below.  
+node is defined as  
+
+struct node {
+    
+    int data;
+    struct node *left;
+    struct node *right;
+  
+};
+
+*/
+void preOrder(struct node *root) {
+    if (root == NULL) return;
+
+    printf("%d ", root->data);   // 1. Visit root
+    preOrder(root->left);        // 2. Left subtree
+    preOrder(root->right);       // 3. Right subtree
+}
+
+
+int main() {
+  
+    struct node* root = NULL;
+    
+    int t;
+    int data;
+
+    scanf("%d", &t);
+
+    while(t-- > 0) {
+        scanf("%d", &data);
+        root = insert(root, data);
+    }
+  
+	preOrder(root);
+    return 0;
+}
+
+12.Tree: Huffman Decoding
+
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <assert.h>
+#include <limits.h>
+#include <stdbool.h>
+
+int main() {
+    /* Enter your code here. Read input from STDIN. Print output to STDOUT */
+    void decode_huff(struct node* root, char* s) {
+    struct node* current = root;
+
+    for (int i = 0; s[i] != '\0'; i++) {
+        if (s[i] == '0') {
+            current = current->left;
+        } else {
+            current = current->right;
+        }
+
+        // If leaf node (means character found)
+        if (current->left == NULL && current->right == NULL) {
+            printf("%c", current->data);
+            current = root;  // reset to root for next character
+        }
+    }
+}
+
+13.Binary Search Tree : Lowest Common Ancestor
+
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+
+struct node {
+    
+    int data;
+    struct node *left;
+    struct node *right;
+  
+};
+
+struct node* insert( struct node* root, int data ) {
+		
+	if(root == NULL) {
+	
+        struct node* node = (struct node*)malloc(sizeof(struct node));
+
+        node->data = data;
+
+        node->left = NULL;
+        node->right = NULL;
+        return node;
+	  
+	} else {
+      
+		struct node* cur;
+		
+		if(data <= root->data) {
+            cur = insert(root->left, data);
+            root->left = cur;
+		} else {
+            cur = insert(root->right, data);
+            root->right = cur;
+		}
+	
+		return root;
+	}
+}
+
+/* you only have to complete the function given below.  
+node is defined as  
+
+struct node {
+    
+    int data;
+    struct node *left;
+    struct node *right;
+  
+};
+
+*/
+struct node *lca(struct node *root, int v1, int v2) {
+    if (root == NULL) return NULL;
+
+    // If both values are smaller than root, LCA lies in left subtree
+    if (v1 < root->data && v2 < root->data) {
+        return lca(root->left, v1, v2);
+    }
+
+    // If both values are greater than root, LCA lies in right subtree
+    if (v1 > root->data && v2 > root->data) {
+        return lca(root->right, v1, v2);
+    }
+
+    // If one value is smaller and the other is greater, root is LCA
+    return root;
+}
+
+
+
+int main() {
+  
+    struct node* root = NULL;
+    
+    int t;
+    int data;
+
+    scanf("%d", &t);
+
+    while(t-- > 0) {
+        scanf("%d", &data);
+        root = insert(root, data);
+    }
+  	int v1;
+  	int v2;
+  
+  	scanf("%d%d", &v1, &v2);
+	struct node *ans = lca(root, v1, v2);
+  	printf("%d", ans->data);
+  	
+    return 0;
+}
+
+14.No Prefix Set
+
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+
+struct node {
+    
+    int data;
+    struct node *left;
+    struct node *right;
+  
+};
+
+struct node* insert( struct node* root, int data ) {
+		
+	if(root == NULL) {
+	
+        struct node* node = (struct node*)malloc(sizeof(struct node));
+
+        node->data = data;
+
+        node->left = NULL;
+        node->right = NULL;
+        return node;
+	  
+	} else {
+      
+		struct node* cur;
+		
+		if(data <= root->data) {
+            cur = insert(root->left, data);
+            root->left = cur;
+		} else {
+            cur = insert(root->right, data);
+            root->right = cur;
+		}
+	
+		return root;
+	}
+}
+
+/* you only have to complete the function given below.  
+node is defined as  
+
+struct node {
+    
+    int data;
+    struct node *left;
+    struct node *right;
+  
+};
+
+*/
+struct node *lca(struct node *root, int v1, int v2) {
+    if (root == NULL) return NULL;
+
+    // If both values are smaller than root, LCA lies in left subtree
+    if (v1 < root->data && v2 < root->data) {
+        return lca(root->left, v1, v2);
+    }
+
+    // If both values are greater than root, LCA lies in right subtree
+    if (v1 > root->data && v2 > root->data) {
+        return lca(root->right, v1, v2);
+    }
+
+    // If one value is smaller and the other is greater, root is LCA
+    return root;
+}
+
+
+
+int main() {
+  
+    struct node* root = NULL;
+    
+    int t;
+    int data;
+
+    scanf("%d", &t);
+
+    while(t-- > 0) {
+        scanf("%d", &data);
+        root = insert(root, data);
+    }
+  	int v1;
+  	int v2;
+  
+  	scanf("%d%d", &v1, &v2);
+	struct node *ans = lca(root, v1, v2);
+  	printf("%d", ans->data);
+  	
+    return 0;
+}
+
+15.Castle on the Grid
+
+#include <assert.h>
+#include <ctype.h>
+#include <limits.h>
+#include <math.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* readline();
+char* ltrim(char*);
+char* rtrim(char*);
+char** split_string(char*);
+
+int parse_int(char*);
+
+/*
+ * Complete the 'minimumMoves' function below.
+ *
+ * The function is expected to return an INTEGER.
+ * The function accepts following parameters:
+ *  1. STRING_ARRAY grid
+ *  2. INTEGER startX
+ *  3. INTEGER startY
+ *  4. INTEGER goalX
+ *  5. INTEGER goalY
+ */
+
+int minimumMoves(int grid_count, char** grid, int startX, int startY, int goalX, int goalY) {
+    int n = grid_count;
+
+    // visited array to store shortest moves
+    int visited[n][n];
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            visited[i][j] = -1;
+
+    // BFS queue
+    int qx[n * n], qy[n * n];
+    int front = 0, rear = 0;
+
+    // Enqueue starting point
+    qx[rear] = startX;
+    qy[rear] = startY;
+    rear++;
+    visited[startX][startY] = 0;
+
+    // Directions (up, down, left, right)
+    int dx[] = {-1, 1, 0, 0};
+    int dy[] = {0, 0, -1, 1};
+
+    while (front < rear) {
+        int x = qx[front];
+        int y = qy[front];
+        front++;
+
+        // If reached goal
+        if (x == goalX && y == goalY) {
+            return visited[x][y];
+        }
+
+        // Explore all 4 directions
+        for (int d = 0; d < 4; d++) {
+            int nx = x + dx[d];
+            int ny = y + dy[d];
+
+            // Keep moving in the same direction until hitting wall or bou;ndary
+            while (nx >= 0 && nx < n && ny >= 0 && ny < n && grid[nx][ny] != 'X') {
+                if (visited[nx][ny] == -1) { // Not visited
+                    visited[nx][ny] = visited[x][y] + 1;
+                    qx[rear] = nx;
+                    qy[rear] = ny;
+                    rear++;
+                }
+                nx += dx[d];
+                ny += dy[d];
+            }
+        }
+    }
+
+    return -1; // If no path found
+}
+
+int main()
+{
+    FILE* fptr = fopen(getenv("OUTPUT_PATH"), "w");
+
+    int n = parse_int(ltrim(rtrim(readline())));
+
+    char** grid = malloc(n * sizeof(char*));
+
+    for (int i = 0; i < n; i++) {
+        char* grid_item = readline();
+
+        *(grid + i) = grid_item;
+    }
+
+    char** first_multiple_input = split_string(rtrim(readline()));
+
+    int startX = parse_int(*(first_multiple_input + 0));
+
+    int startY = parse_int(*(first_multiple_input + 1));
+
+    int goalX = parse_int(*(first_multiple_input + 2));
+
+    int goalY = parse_int(*(first_multiple_input + 3));
+
+    int result = minimumMoves(n, grid, startX, startY, goalX, goalY);
+
+    fprintf(fptr, "%d\n", result);
+
+    fclose(fptr);
+
+    return 0;
+}
+
+char* readline() {
+    size_t alloc_length = 1024;
+    size_t data_length = 0;
+
+    char* data = malloc(alloc_length);
+
+    while (true) {
+        char* cursor = data + data_length;
+        char* line = fgets(cursor, alloc_length - data_length, stdin);
+
+        if (!line) {
+            break;
+        }
+
+        data_length += strlen(cursor);
+
+        if (data_length < alloc_length - 1 || data[data_length - 1] == '\n') {
+            break;
+        }
+
+        alloc_length <<= 1;
+
+        data = realloc(data, alloc_length);
+
+        if (!data) {
+            data = '\0';
+
+            break;
+        }
+    }
+
+    if (data[data_length - 1] == '\n') {
+        data[data_length - 1] = '\0';
+
+        data = realloc(data, data_length);
+
+        if (!data) {
+            data = '\0';
+        }
+    } else {
+        data = realloc(data, data_length + 1);
+
+        if (!data) {
+            data = '\0';
+        } else {
+            data[data_length] = '\0';
+        }
+    }
+
+    return data;
+}
+
+char* ltrim(char* str) {
+    if (!str) {
+        return '\0';
+    }
+
+    if (!*str) {
+        return str;
+    }
+
+    while (*str != '\0' && isspace(*str)) {
+        str++;
+    }
+
+    return str;
+}
+
+char* rtrim(char* str) {
+    if (!str) {
+        return '\0';
+    }
+
+    if (!*str) {
+        return str;
+    }
+
+    char* end = str + strlen(str) - 1;
+
+    while (end >= str && isspace(*end)) {
+        end--;
+    }
+
+    *(end + 1) = '\0';
+
+    return str;
+}
+
+char** split_string(char* str) {
+    char** splits = NULL;
+    char* token = strtok(str, " ");
+
+    int spaces = 0;
+
+    while (token) {
+        splits = realloc(splits, sizeof(char*) * ++spaces);
+
+        if (!splits) {
+            return splits;
+        }
+
+        splits[spaces - 1] = token;
+
+        token = strtok(NULL, " ");
+    }
+
+    return splits;
+}
+
+int parse_int(char* str) {
+    char* endptr;
+    int value = strtol(str, &endptr, 10);
+
+    if (endptr == str || *endptr != '\0') {
+        exit(EXIT_FAILURE);
+    }
+
+    return value;
+}
+
+16.Roads and Libraries
+
+#include <assert.h>
+#include <ctype.h>
+#include <limits.h>
+#include <math.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* readline();
+char* ltrim(char*);
+char* rtrim(char*);
+char** split_string(char*);
+
+int parse_int(char*);
+
+/*
+ * Complete the 'roadsAndLibraries' function below.
+ *
+ * The function is expected to return a LONG_INTEGER.
+ * The function accepts following parameters:
+ *  1. INTEGER n
+ *  2. INTEGER c_lib
+ *  3. INTEGER c_road
+ *  4. 2D_INTEGER_ARRAY cities
+ */
+
+long roadsAndLibraries(int n, int c_lib, int c_road, int cities_rows, int cities_columns, int** cities) {
+    // If building a library is cheaper or equal to building a road,
+    // best option is to build a library in every city
+    if (c_lib <= c_road) {
+        return (long)n * c_lib;
+    }
+
+    // Build adjacency list
+    int* adj[n + 1];
+    int adjSize[n + 1];
+    for (int i = 1; i <= n; i++) {
+        adjSize[i] = 0;
+        adj[i] = malloc(n * sizeof(int)); // allocate max possible (safe but large)
+    }
+
+    for (int i = 0; i < cities_rows; i++) {
+        int u = cities[i][0];
+        int v = cities[i][1];
+        adj[u][adjSize[u]++] = v;
+        adj[v][adjSize[v]++] = u;
+    }
+
+    // Visited array
+    int* visited = calloc(n + 1, sizeof(int));
+    long total_cost = 0;
+
+    // DFS stack
+    int* stack = malloc(n * sizeof(int));
+
+    for (int i = 1; i <= n; i++) {
+        if (!visited[i]) {
+            // New component
+            long component_size = 0;
+
+            // iterative DFS
+            int top = 0;
+            stack[top++] = i;
+            visited[i] = 1;
+
+            while (top > 0) {
+                int node = stack[--top];
+                component_size++;
+
+                for (int j = 0; j < adjSize[node]; j++) {
+                    int nei = adj[node][j];
+                    if (!visited[nei]) {
+                        visited[nei] = 1;
+                        stack[top++] = nei;
+                    }
+                }
+            }
+
+            // Cost for this component: 1 library + (size-1) roads
+            total_cost += c_lib + (component_size - 1) * c_road;
+        }
+    }
+
+    // Cleanup
+    free(visited);
+    free(stack);
+    for (int i = 1; i <= n; i++) {
+        free(adj[i]);
+    }
+
+    return total_cost;
+}
+
+
+int main()
+{
+    FILE* fptr = fopen(getenv("OUTPUT_PATH"), "w");
+
+    int q = parse_int(ltrim(rtrim(readline())));
+
+    for (int q_itr = 0; q_itr < q; q_itr++) {
+        char** first_multiple_input = split_string(rtrim(readline()));
+
+        int n = parse_int(*(first_multiple_input + 0));
+
+        int m = parse_int(*(first_multiple_input + 1));
+
+        int c_lib = parse_int(*(first_multiple_input + 2));
+
+        int c_road = parse_int(*(first_multiple_input + 3));
+
+        int** cities = malloc(m * sizeof(int*));
+
+        for (int i = 0; i < m; i++) {
+            *(cities + i) = malloc(2 * (sizeof(int)));
+
+            char** cities_item_temp = split_string(rtrim(readline()));
+
+            for (int j = 0; j < 2; j++) {
+                int cities_item = parse_int(*(cities_item_temp + j));
+
+                *(*(cities + i) + j) = cities_item;
+            }
+        }
+
+        long result = roadsAndLibraries(n, c_lib, c_road, m, 2, cities);
+
+        fprintf(fptr, "%ld\n", result);
+    }
+
+    fclose(fptr);
+
+    return 0;
+}
+
+char* readline() {
+    size_t alloc_length = 1024;
+    size_t data_length = 0;
+
+    char* data = malloc(alloc_length);
+
+    while (true) {
+        char* cursor = data + data_length;
+        char* line = fgets(cursor, alloc_length - data_length, stdin);
+
+        if (!line) {
+            break;
+        }
+
+        data_length += strlen(cursor);
+
+        if (data_length < alloc_length - 1 || data[data_length - 1] == '\n') {
+            break;
+        }
+
+        alloc_length <<= 1;
+
+        data = realloc(data, alloc_length);
+
+        if (!data) {
+            data = '\0';
+
+            break;
+        }
+    }
+
+    if (data[data_length - 1] == '\n') {
+        data[data_length - 1] = '\0';
+
+        data = realloc(data, data_length);
+
+        if (!data) {
+            data = '\0';
+        }
+    } else {
+        data = realloc(data, data_length + 1);
+
+        if (!data) {
+            data = '\0';
+        } else {
+            data[data_length] = '\0';
+        }
+    }
+
+    return data;
+}
+
+char* ltrim(char* str) {
+    if (!str) {
+        return '\0';
+    }
+
+    if (!*str) {
+        return str;
+    }
+
+    while (*str != '\0' && isspace(*str)) {
+        str++;
+    }
+
+    return str;
+}
+
+char* rtrim(char* str) {
+    if (!str) {
+        return '\0';
+    }
+
+    if (!*str) {
+        return str;
+    }
+
+    char* end = str + strlen(str) - 1;
+
+    while (end >= str && isspace(*end)) {
+        end--;
+    }
+
+    *(end + 1) = '\0';
+
+    return str;
+}
+
+char** split_string(char* str) {
+    char** splits = NULL;
+    char* token = strtok(str, " ");
+
+    int spaces = 0;
+
+    while (token) {
+        splits = realloc(splits, sizeof(char*) * ++spaces);
+
+        if (!splits) {
+            return splits;
+        }
+
+        splits[spaces - 1] = token;
+
+        token = strtok(NULL, " ");
+    }
+
+    return splits;
+}
+
+int parse_int(char* str) {
+    char* endptr;
+    int value = strtol(str, &endptr, 10);
+
+    if (endptr == str || *endptr != '\0') {
+        exit(EXIT_FAILURE);
+    }
+
+    return value;
+}
+
+
+
